@@ -808,6 +808,10 @@ class Database(Model, AuditMixinNullable):
         cols = [col[0] for col in cur.cursor.description]
         df = pd.DataFrame(cur.fetchall(), columns=cols)
 
+        # Close connection if applicable. Required for Hive.
+        if hasattr(cur, 'close'):
+            cur.close()
+
         def needs_conversion(df_series):
             if df_series.empty:
                 return False
